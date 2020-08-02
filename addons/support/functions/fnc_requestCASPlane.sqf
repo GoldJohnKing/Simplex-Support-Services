@@ -20,14 +20,14 @@ if ((_entity getVariable "SSS_cooldown") > 0) exitWith {
 
 ["SSS_requestSubmitted",[_entity,[_selectedWeapon,_position,_approachDirection,_signalSelection,_smokeColorSelection]]] call CBA_fnc_globalEvent;
 
-[_entity,_entity getVariable "SSS_cooldownDefault","Rearmed and ready for further tasking."] call EFUNC(common,cooldown);
+[_entity,_entity getVariable "SSS_cooldownDefault","弹药补充完成, 等待进一步指示。"] call EFUNC(common,cooldown);
 
 // Notify
-private _message = format ["%1 from %2. ETA 45s. %3",mapGridPosition _position,DIRECTIONS # _approachDirection,switch (_signalSelection) do {
-	case 0 : {format ["Firing %1 on map coordinates.",getText (configFile >> "CfgMagazines" >> _magazine >> "displayName")]};
-	case 1 : {format ["Will fire %1 at laser target.",getText (configFile >> "CfgMagazines" >> _magazine >> "displayName")]};
-	case 2 : {format ["Will fire %1 at %2 smoke.",getText (configFile >> "CfgMagazines" >> _magazine >> "displayName"),SMOKE_COLORS # _smokeColorSelection]};
-	case 3 : {format ["Will fire %1 at IR strobe.",getText (configFile >> "CfgMagazines" >> _magazine >> "displayName")]};
+private _message = format ["%1 正在从 %2 方向进场。预计到达时间 45 秒. %3",mapGridPosition _position,DIRECTIONS # _approachDirection,switch (_signalSelection) do {
+	case 0 : {format ["准备向地图坐标发射 %1。",getText (configFile >> "CfgMagazines" >> _magazine >> "displayName")]};
+	case 1 : {format ["准备向镭射指引目标发射 %1。",getText (configFile >> "CfgMagazines" >> _magazine >> "displayName")]};
+	case 2 : {format ["准备向%2烟雾弹发射 %1。",getText (configFile >> "CfgMagazines" >> _magazine >> "displayName"),SMOKE_COLORS # _smokeColorSelection]};
+	case 3 : {format ["准备向红外信号发射 %1。",getText (configFile >> "CfgMagazines" >> _magazine >> "displayName")]};
 }];
 
 NOTIFY(_entity,_message);
@@ -164,7 +164,7 @@ private _offset = switch (_weaponType) do {
 		if (!isNull _entity && !(_vehicle getVariable ["SSS_signalFound",false])) then {
 			private _cooldown = (_entity getVariable "SSS_cooldown") min ((_entity getVariable "SSS_cooldownDefault") * 0.25);
 			_entity setVariable ["SSS_cooldown",_cooldown,true];
-			NOTIFY_1(_entity,"No suitable signal was found. Ready for new requests in %1",PROPER_COOLDOWN(_entity));
+			NOTIFY_1(_entity,"没有发现目标信号。本支援将在 %1 后重新上线。",PROPER_COOLDOWN(_entity));
 		};
 
 		// Delete targets

@@ -14,7 +14,7 @@ if ((_entity getVariable "SSS_cooldown") > 0) exitWith {
 
 ["SSS_requestSubmitted",[_entity,[_position,_loiterDirection,_loiterRadius,_loiterAltitude]]] call CBA_fnc_globalEvent;
 
-NOTIFY(_entity,"UAV is on the way and will notify on arrival.");
+NOTIFY(_entity,"无人机正在路上, 并将在到达指定位置后通知。");
 
 // Update task marker
 [_entity,true,_position] call EFUNC(common,updateMarker);
@@ -68,7 +68,7 @@ _vehicle flyInHeightASL [_altitudeASL,_altitudeASL,_altitudeASL];
 	if (!alive _vehicle) exitwith {
 		_entity setVariable ["SSS_active",false,true];
 		[_entity,false] call EFUNC(common,updateMarker);
-		[_entity,_entity getVariable "SSS_cooldownDefault","Rearmed and ready for further tasking."] call EFUNC(common,cooldown);
+		[_entity,_entity getVariable "SSS_cooldownDefault","弹药补充完成, 等待进一步指示。"] call EFUNC(common,cooldown);
 	};
 
 	// Unlock control
@@ -82,7 +82,7 @@ _vehicle flyInHeightASL [_altitudeASL,_altitudeASL,_altitudeASL];
 	_WP setWaypointLoiterRadius _loiterRadius;
 	_vehicle flyInHeightASL [_altitudeASL,_altitudeASL,_altitudeASL];
 
-	NOTIFY(_entity,"UAV is in the requested area. Connect via UAV Terminal.");
+	NOTIFY(_entity,"无人机已抵达指定位置。通过无人机终端连接。");
 
 	_entity setVariable ["SSS_loitering",true,true];
 
@@ -102,9 +102,9 @@ _vehicle flyInHeightASL [_altitudeASL,_altitudeASL,_altitudeASL];
 
 		[_entity,false] call EFUNC(common,updateMarker);
 
-		[_entity,_entity getVariable "SSS_cooldownDefault","Rearmed and ready for further tasking."] call EFUNC(common,cooldown);
+		[_entity,_entity getVariable "SSS_cooldownDefault","弹药补充完成, 等待进一步指示。"] call EFUNC(common,cooldown);
 
-		NOTIFY(_entity,"Drone has been destroyed.");
+		NOTIFY(_entity,"无人机被摧毁。");
 	},_this,_entity getVariable "SSS_loiterTime",{
 		params ["_entity","_vehicle","_altitudeASL","_position","_loiterDirection","_loiterRadius","_loiterAltitude","_startPosition"];
 
@@ -139,9 +139,9 @@ _vehicle flyInHeightASL [_altitudeASL,_altitudeASL,_altitudeASL];
 
 		[_entity,false] call EFUNC(common,updateMarker);
 
-		[_entity,_entity getVariable "SSS_cooldownDefault","Rearmed and ready for further tasking."] call EFUNC(common,cooldown);
+		[_entity,_entity getVariable "SSS_cooldownDefault","弹药补充完成, 等待进一步指示。"] call EFUNC(common,cooldown);
 
-		NOTIFY_1(_entity,"UAV is leaving the area. Support will be available again in %1.",PROPER_COOLDOWN(_entity));
+		NOTIFY_1(_entity,"无人机正在离开作战区域。下一次无人机支援将在 %1 后可用。",PROPER_COOLDOWN(_entity));
 
 		["SSS_requestCompleted",[_entity]] call CBA_fnc_globalEvent;
 	}] call CBA_fnc_waitUntilAndExecute;

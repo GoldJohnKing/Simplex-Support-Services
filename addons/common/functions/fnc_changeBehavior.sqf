@@ -23,7 +23,7 @@ switch (_entity getVariable "SSS_supportType") do {
 			[_vehicle,_lightsOn] remoteExecCall ["setPilotLight",_vehicle];
 			[_vehicle,_collisionLightsOn] remoteExecCall ["setCollisionLight",_vehicle];
 
-			NOTIFY(_entity,"Roger that. Changing it up.");
+			NOTIFY(_entity,"收到。正在调整。");
 		};
 	};
 
@@ -62,7 +62,7 @@ switch (_entity getVariable "SSS_supportType") do {
 				} forEach PRIMARY_CREW(_vehicle);
 			};
 
-			NOTIFY(_entity,"Roger that. Changing it up.");
+			NOTIFY(_entity,"收到。正在调整。");
 		};
 	};
 
@@ -98,7 +98,7 @@ switch (_entity getVariable "SSS_supportType") do {
 				} forEach PRIMARY_CREW(_vehicle);
 			};
 
-			NOTIFY(_entity,"Roger that. Changing it up.");
+			NOTIFY(_entity,"收到。正在调整。");
 		};
 	};
 
@@ -135,7 +135,7 @@ switch (_entity getVariable "SSS_supportType") do {
 				} forEach PRIMARY_CREW(_vehicle);
 			};
 
-			NOTIFY(_entity,"Roger that. Changing it up.");
+			NOTIFY(_entity,"收到。正在调整。");
 		};
 	};
 
@@ -175,7 +175,7 @@ switch (_entity getVariable "SSS_supportType") do {
 				} forEach PRIMARY_CREW(_vehicle);
 			};
 
-			NOTIFY(_entity,"Roger that. Changing it up.");
+			NOTIFY(_entity,"收到。正在调整。");
 		};
 	};
 };

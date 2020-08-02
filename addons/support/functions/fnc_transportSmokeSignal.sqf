@@ -12,17 +12,17 @@ if (_firstCall) then {
 
 private _signalType = if (daytime > _sunrise && daytime < _sunset) then {
 	if (_firstCall) then {
-		NOTIFY(_entity,"Arrived at pickup destination. Pop smoke to confirm landing position.");
+		NOTIFY(_entity,"已抵达接取地点。投放烟雾弹来确认降落位置。");
 	} else {
-		NOTIFY(_entity,"Disregarding that signal. Pop a new smoke to confirm landing position.");
+		NOTIFY(_entity,"忽略该信号。投放新的烟雾弹来确认降落位置。");
 	};
 
 	"SmokeShell"
 } else {
 	if (_firstCall) then {
-		NOTIFY(_entity,"Arrived at pickup destination. Deploy IR signal to confirm landing position.");
+		NOTIFY(_entity,"已抵达接取地点。使用红外信号来确认降落地点。");
 	} else {
-		NOTIFY(_entity,"Disregarding that signal. Deploy a new IR signal to confirm landing position.");
+		NOTIFY(_entity,"忽略该信号。使用新的红外信号来确认降落地点。");
 	};
 
 	"IRStrobeBase"
@@ -46,12 +46,12 @@ private _signalType = if (daytime > _sunrise && daytime < _sunset) then {
 	_entity setVariable ["SSS_needConfirmation",true,true];
 
 	private _signalSeen = if (_signalType == "SmokeShell") then {
-		format ["a %1 smoke",_signal call EFUNC(common,getSmokeColor)]
+		format ["一个%1烟雾弹",_signal call EFUNC(common,getSmokeColor)]
 	} else {
-		"an IR signal"
+		"一个红外信号"
 	};
 
-	NOTIFY_1(_entity,"We see %1. Do you confirm?",_signalSeen);
+	NOTIFY_1(_entity,"我们看见了 %1。是否确认？",_signalSeen);
 
 	private _signalPos = getPos _signal;
 	_signalPos set [2,0];

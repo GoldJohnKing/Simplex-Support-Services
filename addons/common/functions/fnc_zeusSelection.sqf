@@ -23,7 +23,7 @@ _ctrlMessage ctrlCommit 0.1;
 		_display displayRemoveEventHandler ["KeyDown",_thisID];
 		_ctrlMessage ctrlSetFade 1;
 		_ctrlMessage ctrlCommit 0.5;
-		[objNull,"Selection cancelled"] call BIS_fnc_showCuratorFeedbackMessage;
+		[objNull,"取消选择"] call BIS_fnc_showCuratorFeedbackMessage;
 		true
 	};
 
