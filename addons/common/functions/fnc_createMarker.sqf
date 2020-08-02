@@ -12,6 +12,6 @@ _entity setVariable ["SSS_marker",_marker,true];
 createMarker [_marker,[0,0,0]];
 _marker setMarkerShape "ICON";
 _marker setMarkerType _icon;
-_marker setMarkerColor "ColorGrey";
+_marker setMarkerColor "ColorWEST"; // Edited: Change Color
 _marker setMarkerText format ["%1 - %2",_string,_callsign];
 _marker setMarkerAlpha 0;
