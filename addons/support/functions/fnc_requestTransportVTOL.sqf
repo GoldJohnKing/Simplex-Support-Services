@@ -35,7 +35,7 @@ switch (toUpper _request) do {
 			// Begin order
 			_entity setVariable ["SSS_onTask",true,true];
 			[_entity,true,_position] call EFUNC(common,updateMarker);
-			NOTIFY(_entity,"Returning to base.");
+			NOTIFY(_entity,"正在返回基地。");
 
 			_vehicle setVariable ["SSS_WPDone",false];
 			[_entity,_vehicle] call EFUNC(common,clearWaypoints);
@@ -64,7 +64,7 @@ switch (toUpper _request) do {
 						deleteVehicle _pad;
 					};
 
-					END_ORDER(_entity,"Arrived at base. Ready for further tasking.");
+					END_ORDER(_entity,"已经抵达基地。等待进一步指示。");
 					_entity setVariable ["SSS_awayFromBase",false,true];
 					_vehicle engineOn false;
 					_vehicle doFollow _vehicle;
@@ -84,7 +84,7 @@ switch (toUpper _request) do {
 		[{!((_this # 0) getVariable "SSS_onTask")},{
 			params ["_entity","_vehicle","_position"];
 
-			BEGIN_ORDER(_entity,_position,"Heading to pickup location. Prepare to signal on arrival.");
+			BEGIN_ORDER(_entity,_position,"正在前往接取地点。请准备发射信号。");
 
 			_vehicle setVariable ["SSS_WPDone",false];
 			[_entity,_vehicle] call EFUNC(common,clearWaypoints);
@@ -144,7 +144,7 @@ switch (toUpper _request) do {
 				_nearestPads # 0
 			};
 
-			BEGIN_ORDER(_entity,_position,"Heading to the LZ.");
+			BEGIN_ORDER(_entity,_position,"正在前往降落区域。");
 
 			_vehicle setVariable ["SSS_WPDone",false];
 			[_entity,_vehicle] call EFUNC(common,clearWaypoints);
@@ -177,10 +177,10 @@ switch (toUpper _request) do {
 						};
 					};
 
-					END_ORDER(_entity,"Landed at location. Ready for further tasking.");
+					END_ORDER(_entity,"已降落在指定地点。等待进一步指示。");
 
 					private _requestName = if (_engineOn) then {
-						group _vehicle setBehaviour "AWARE"; // VTOLs ignore engineOn command otherwise
+						group _vehicle setBehaviour "COMBAT"; // Edited: Default is "AWARE" - VTOLs ignore engineOn command otherwise
 
 						[{
 							params ["_entity","_vehicle"];
@@ -213,7 +213,7 @@ switch (toUpper _request) do {
 		[{!((_this # 0) getVariable "SSS_onTask")},{
 			params ["_entity","_vehicle","_position"];
 
-			BEGIN_ORDER(_entity,_position,"Moving to requested location.");
+			BEGIN_ORDER(_entity,_position,"正在移动至请求地点。");
 
 			_vehicle setVariable ["SSS_WPDone",false];
 			[_entity,_vehicle] call EFUNC(common,clearWaypoints);
@@ -226,7 +226,7 @@ switch (toUpper _request) do {
 					CANCEL_ORDER(_entity);
 				};
 
-				END_ORDER(_entity,"Destination reached. Ready for further tasking.");
+				END_ORDER(_entity,"抵达目的地。等待进一步指示。");
 
 				["SSS_requestCompleted",[_entity,["MOVE"]]] call CBA_fnc_globalEvent;
 			},[_entity,_vehicle]] call CBA_fnc_waitUntilAndExecute;
@@ -241,7 +241,7 @@ switch (toUpper _request) do {
 		[{!((_this # 0) getVariable "SSS_onTask")},{
 			params ["_entity","_vehicle","_position","_jumpDelay","_AIOpeningHeight"];
 
-			BEGIN_ORDER(_entity,_position,"Moving to location for paradrop. Get ready...");
+			BEGIN_ORDER(_entity,_position,"正在移动至空投地点。请做好准备...");
 
 			_vehicle setVariable ["SSS_WPDone",false];
 			[_entity,_vehicle] call EFUNC(common,clearWaypoints);
@@ -259,11 +259,12 @@ switch (toUpper _request) do {
 
 				[_entity,_vehicle,_jumpDelay,_AIOpeningHeight] call FUNC(transportParadrop);
 
-				END_ORDER(_entity,"Go! Go! Go!");
+				END_ORDER(_entity,"跳! 跳! 跳!");
 
 				["SSS_requestCompleted",[_entity,["PARADROP"]]] call CBA_fnc_globalEvent;
 			},[_entity,_vehicle,_position,_jumpDelay,_AIOpeningHeight]] call CBA_fnc_waitUntilAndExecute;
 		},[_entity,_vehicle,_position,_jumpDelay,_AIOpeningHeight]] call CBA_fnc_waitUntilAndExecute;
+		
 	};
 
 	case "LOITER" : {
@@ -274,7 +275,7 @@ switch (toUpper _request) do {
 		[{!((_this # 0) getVariable "SSS_onTask")},{
 			params ["_entity","_vehicle","_position","_loiterRadius","_loiterDirection"];
 
-			BEGIN_ORDER(_entity,_position,"Moving to requested location to loiter.");
+			BEGIN_ORDER(_entity,_position,"正在移动至目标地点并环绕目标飞行。");
 
 			private _prepDist = [100,_loiterRadius + 100] select (_vehicle distance2D _position > (_loiterRadius + 100));
 			_vehicle setVariable ["SSS_WPDone",false];
@@ -298,7 +299,7 @@ switch (toUpper _request) do {
 
 				// End order without removing marker
 				_entity setVariable ["SSS_onTask",false,true];
-				NOTIFY(_entity,"Destination reached. Loitering until further tasking.");
+				NOTIFY(_entity,"已抵达目的地。正在环绕目标飞行，直到获得进一步指示。");
 
 				["SSS_requestCompleted",[_entity,["LOITER"]]] call CBA_fnc_globalEvent;
 			},[_entity,_vehicle,_position,_loiterRadius,_loiterDirection]] call CBA_fnc_waitUntilAndExecute;
