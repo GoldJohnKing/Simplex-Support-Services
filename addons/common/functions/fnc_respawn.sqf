@@ -34,7 +34,7 @@ if (SSS_setting_cleanupCrew) then {
 	[PRIMARY_CREW(_vehicle),false] remoteExecCall ["orderGetIn",_vehicle];
 };
 
-private _message = format ["Vehicle replacement will arrive in %1",PROPER_TIME(_respawnTime)];
+private _message = format ["新的载具将在%1后抵达。",PROPER_TIME(_respawnTime)];
 NOTIFY(_entity,_message);
 
 [{
@@ -48,18 +48,18 @@ NOTIFY(_entity,_message);
 	// Clear obstructions
 	{
 		private _obj = _x;
-		if ((!alive _obj || {alive _x} count crew _obj == 0) && {_obj isKindOf "LandVehicle" || _obj isKindOf "Air" || _obj isKindOf "Ship"}) then {
+		if ((!alive _obj || {alive _x} count crew _obj == 0) && !((_obj getVariable ["btc_dont_delete", false]) || (_obj getVariable ["GCblackList", false])) && {_obj isKindOf "LandVehicle" || _obj isKindOf "Air" || _obj isKindOf "Ship"}) then { // Edited: Support for btc vehicles
 			{_obj deleteVehicleCrew _x} forEach crew _obj;
 			deleteVehicle _obj;
 		};
-	} forEach (ASLToAGL _base nearObjects ((sizeOf _classname) * 0.7));
+	} forEach (ASLToAGL _base nearObjects (sizeOf _classname)); // Edited: Increase wreck search range, default = 0.7
 
 	[{
 		params ["_entity","_base","_classname"];
 
 		// Create vehicle
 		private _group = createGroup [_entity getVariable "SSS_side",true];
-		private _vehicle = createVehicle [_classname,ASLToAGL _base,[],0,"NONE"];
+		private _vehicle = createVehicle [_classname,ASLToAGL _base,[],0,"NONE"]; // Edited: Fix collision when respawn, support land vehicles only, does not support boat anymore, default = [_classname,ASLToAGL _base,[],0,"NONE"]
 		(createVehicleCrew _vehicle) deleteGroupWhenEmpty true;
 		crew _vehicle joinSilent _group;
 		_group addVehicle _vehicle;
@@ -125,7 +125,7 @@ NOTIFY(_entity,_message);
 		};
 
 		_entity setVariable ["SSS_respawning",false,true];
-		NOTIFY(_entity,"Replacement vehicle has arrived.");
+		NOTIFY(_entity,"新的载具已经抵达。");
 
 		// Execute custom code
 		_vehicle call (_entity getVariable "SSS_customInit");
