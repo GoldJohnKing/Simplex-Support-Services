@@ -35,7 +35,7 @@ switch (toUpper _request) do {
 			// Begin order
 			_entity setVariable ["SSS_onTask",true,true];
 			[_entity,true,_position] call EFUNC(common,updateMarker);
-			NOTIFY(_entity,"Returning to base.");
+			NOTIFY(_entity,"正在返回基地。");
 
 			_vehicle setVariable ["SSS_WPDone",false];
 			[_entity,_vehicle] call EFUNC(common,clearWaypoints);
@@ -52,18 +52,20 @@ switch (toUpper _request) do {
 				// Begin landing
 				(group _vehicle) setSpeedMode "LIMITED";
 				doStop _vehicle;
-				[{_this land "LAND"},_vehicle] call CBA_fnc_execNextFrame;
+				group _vehicle setBehaviour "CARELESS"; // Edited: Force land
+				_vehicle land "LAND"; // Edited: Force land
+				// [{_this land "LAND"},_vehicle] call CBA_fnc_execNextFrame;
 
 				// Execute land again if helicopter unresponsive
-				[{
-					params ["_entity","_vehicle","_landStartPosASL"];
+				// [{
+				// 	params ["_entity","_vehicle","_landStartPosASL"];
 
-					if (CANCEL_CONDITION) exitWith {};
+				// 	if (CANCEL_CONDITION) exitWith {};
 
-					if (getPosASLVisual _vehicle distance _landStartPosASL < 8 && getPos _vehicle # 2 > 1) then {
-						_vehicle land "LAND";
-					};
-				},[_entity,_vehicle,getPosASLVisual _vehicle],8] call CBA_fnc_waitAndExecute;
+				// 	if (getPosASLVisual _vehicle distance _landStartPosASL < 8 && getPos _vehicle # 2 > 1) then {
+				// 		_vehicle land "LAND";
+				// 	};
+				// },[_entity,_vehicle,getPosASLVisual _vehicle],8] call CBA_fnc_waitAndExecute;
 
 				[{WAIT_UNTIL_LAND},{
 					params ["_entity","_vehicle","_pad"];
@@ -75,7 +77,9 @@ switch (toUpper _request) do {
 						deleteVehicle _pad;
 					};
 
-					END_ORDER(_entity,"Arrived at base. Ready for further tasking.");
+					END_ORDER(_entity,"已经抵达基地。等待进一步指示。");
+					group _vehicle setBehaviour "AWARE"; // Edited: Force land
+					
 					_entity setVariable ["SSS_awayFromBase",false,true];
 					_vehicle engineOn false;
 					_vehicle doFollow _vehicle;
@@ -95,7 +99,7 @@ switch (toUpper _request) do {
 		[{!((_this # 0) getVariable "SSS_onTask")},{
 			params ["_entity","_vehicle","_position"];
 
-			BEGIN_ORDER(_entity,_position,"Heading to pickup location. Prepare to signal on arrival.");
+			BEGIN_ORDER(_entity,_position,"正在前往接取地点。请准备发射信号。");
 
 			_vehicle setVariable ["SSS_WPDone",false];
 			[_entity,_vehicle] call EFUNC(common,clearWaypoints);
@@ -156,7 +160,7 @@ switch (toUpper _request) do {
 				_nearestPads # 0
 			};
 			
-			BEGIN_ORDER(_entity,_position,"Heading to the LZ.");
+			BEGIN_ORDER(_entity,_position,"正在前往降落区域。");
 
 			_vehicle setVariable ["SSS_WPDone",false];
 			[_entity,_vehicle] call EFUNC(common,clearWaypoints);
@@ -175,11 +179,14 @@ switch (toUpper _request) do {
 				// Begin landing
 				(group _vehicle) setSpeedMode "LIMITED";
 				doStop _vehicle;
-				
-				if (_request == "LAND_ENG_OFF") then {
-					[{_this land "LAND"},_vehicle] call CBA_fnc_execNextFrame;
+
+				group _vehicle setBehaviour "CARELESS"; // Edited: Force land
+				if (_request == "LAND_ENG_OFF") then { // Edited: Force land
+					// [{_this land "LAND"},_vehicle] call CBA_fnc_execNextFrame;
+					_vehicle land "LAND";
 				} else {
-					[{_this land "GET IN"},_vehicle] call CBA_fnc_execNextFrame;
+					// [{_this land "GET IN"},_vehicle] call CBA_fnc_execNextFrame;
+					_vehicle land "GET IN";
 				};
 
 				[{WAIT_UNTIL_LAND},{
@@ -194,7 +201,8 @@ switch (toUpper _request) do {
 						};
 					};
 
-					END_ORDER(_entity,"Landed at location. Ready for further tasking.");
+					END_ORDER(_entity,"已降落在指定地点。等待进一步指示。");
+					group _vehicle setBehaviour "AWARE"; // Edited: Force land
 
 					if (_deletePad) then {
 						[{deleteVehicle _this},_pad,60] call CBA_fnc_waitAndExecute;
@@ -212,7 +220,7 @@ switch (toUpper _request) do {
 		[{!((_this # 0) getVariable "SSS_onTask")},{
 			params ["_entity","_vehicle","_position"];
 
-			BEGIN_ORDER(_entity,_position,"Moving to requested location.");
+			BEGIN_ORDER(_entity,_position,"正在移动至请求地点。");
 
 			_vehicle setVariable ["SSS_WPDone",false];
 			[_entity,_vehicle] call EFUNC(common,clearWaypoints);
@@ -225,7 +233,7 @@ switch (toUpper _request) do {
 					CANCEL_ORDER(_entity);
 				};
 
-				END_ORDER(_entity,"Destination reached. Ready for further tasking.");
+				END_ORDER(_entity,"抵达目的地。等待进一步指示。");
 
 				["SSS_requestCompleted",[_entity,["MOVE"]]] call CBA_fnc_globalEvent;
 			},[_entity,_vehicle]] call CBA_fnc_waitUntilAndExecute;
@@ -241,9 +249,9 @@ switch (toUpper _request) do {
 			params ["_entity","_vehicle","_position","_hoverHeight","_doFastrope"];
 
 			private _message = if (_doFastrope) then {
-				format ["Moving to location to fastrope from %1m.",_hoverHeight]
+				format ["正在移动至目标位置并从 %1m 高度索降。",_hoverHeight]
 			} else {
-				format ["Moving to location to hover at %1m.",_hoverHeight]
+				format ["正在移动至目标位置并在 %1m 高度悬停。",_hoverHeight]
 			};
 
 			BEGIN_ORDER(_entity,_position,_message);
@@ -295,7 +303,7 @@ switch (toUpper _request) do {
 		[{!((_this # 0) getVariable "SSS_onTask")},{
 			params ["_entity","_vehicle","_position","_loiterRadius","_loiterDirection"];
 
-			BEGIN_ORDER(_entity,_position,"Moving to requested location to loiter.");
+			BEGIN_ORDER(_entity,_position,"正在移动至目标地点并环绕目标飞行。");
 
 			private _prepDist = [100,_loiterRadius + 100] select (_vehicle distance2D _position > (_loiterRadius + 100));
 			_vehicle setVariable ["SSS_WPDone",false];
@@ -319,7 +327,7 @@ switch (toUpper _request) do {
 
 				// End order without removing marker
 				_entity setVariable ["SSS_onTask",false,true];
-				NOTIFY(_entity,"Destination reached. Loitering until further tasking.");
+				NOTIFY(_entity,"已抵达目的地。正在环绕目标飞行，直到获得进一步指示。");
 
 				["SSS_requestCompleted",[_entity,["LOITER"]]] call CBA_fnc_globalEvent;
 			},[_entity,_vehicle,_position,_loiterRadius,_loiterDirection]] call CBA_fnc_waitUntilAndExecute;
@@ -332,7 +340,7 @@ switch (toUpper _request) do {
 		[{!((_this # 0) getVariable "SSS_onTask")},{
 			params ["_entity","_vehicle","_position"];
 
-			BEGIN_ORDER(_entity,_position,"Moving to sling loading area.");
+			BEGIN_ORDER(_entity,_position,"正在移动至吊挂位置。");
 			_entity setVariable ["SSS_slingLoadPosition",_position,true];
 
 			_vehicle setVariable ["SSS_WPDone",false];
@@ -347,7 +355,7 @@ switch (toUpper _request) do {
 					_entity setVariable ["SSS_slingLoadPosition",nil,true];
 				};
 
-				NOTIFY(_entity,"Arrived at sling load location. Please confirm object to attach.");
+				NOTIFY(_entity,"已抵达吊挂位置。请确认要吊挂的物品。");
 				_entity setVariable ["SSS_slingLoadReady",true,true];
 
 				[{
@@ -368,7 +376,7 @@ switch (toUpper _request) do {
 					_entity setVariable ["SSS_slingLoadPosition",nil,true];
 
 					if (isNull _object) then {
-						END_ORDER(_entity,"Sling Load cancelled. No object selected.");
+						END_ORDER(_entity,"吊挂取消。未选择要吊挂的物品。");
 						["SSS_requestCompleted",[_entity,["SLINGLOAD",objNull]]] call CBA_fnc_globalEvent;
 					} else {
 						if (!local _object) then {
@@ -381,7 +389,7 @@ switch (toUpper _request) do {
 						private _WP = (group _vehicle) addWaypoint [getPos _object,0];
 						_WP setWaypointType "HOOK";
 
-						NOTIFY(_entity,"Sling loading object...");
+						NOTIFY(_entity,"正在吊挂物品...");
 
 						[{
 							params ["_entity","_vehicle"];
@@ -394,7 +402,7 @@ switch (toUpper _request) do {
 								CANCEL_ORDER(_entity);
 							};
 
-							END_ORDER(_entity,"Object sling loaded.");
+							END_ORDER(_entity,"物品已吊挂。");
 							["SSS_requestCompleted",[_entity,["SLINGLOAD",getSlingLoad _vehicle]]] call CBA_fnc_globalEvent;
 						},[_entity,_vehicle]] call CBA_fnc_waitUntilAndExecute;
 					};
@@ -409,7 +417,7 @@ switch (toUpper _request) do {
 		[{!((_this # 0) getVariable "SSS_onTask")},{
 			params ["_entity","_vehicle","_position"];
 
-			BEGIN_ORDER(_entity,_position,"Moving to position to detach.");
+			BEGIN_ORDER(_entity,_position,"正在移动到卸货区域。");
 
 			private _pad = "Land_HelipadEmpty_F" createVehicle _position;
 
@@ -426,7 +434,7 @@ switch (toUpper _request) do {
 					CANCEL_ORDER(_entity);
 				};
 
-				END_ORDER(_entity,"Load detached. Ready for further tasking.");
+				END_ORDER(_entity,"已卸货。等待进一步指示。");
 
 				["SSS_requestCompleted",[_entity,["UNHOOK"]]] call CBA_fnc_globalEvent;
 			},[_entity,_vehicle,_pad]] call CBA_fnc_waitUntilAndExecute;
@@ -441,7 +449,7 @@ switch (toUpper _request) do {
 		[{!((_this # 0) getVariable "SSS_onTask")},{
 			params ["_entity","_vehicle","_position","_jumpDelay","_AIOpeningHeight"];
 
-			BEGIN_ORDER(_entity,_position,"Moving to location for paradrop. Get ready...");
+			BEGIN_ORDER(_entity,_position,"正在移动至空投地点。请做好准备...");
 
 			_vehicle setVariable ["SSS_WPDone",false];
 			[_entity,_vehicle] call EFUNC(common,clearWaypoints);
@@ -458,7 +466,7 @@ switch (toUpper _request) do {
 
 				[_entity,_vehicle,_jumpDelay,_AIOpeningHeight] call FUNC(transportParadrop);
 
-				END_ORDER(_entity,"Go! Go! Go!");
+				END_ORDER(_entity,"跳! 跳! 跳!");
 
 				["SSS_requestCompleted",[_entity,["PARADROP"]]] call CBA_fnc_globalEvent;
 			},[_entity,_vehicle,_position,_jumpDelay,_AIOpeningHeight]] call CBA_fnc_waitUntilAndExecute;
