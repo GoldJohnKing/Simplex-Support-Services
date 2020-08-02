@@ -162,7 +162,7 @@ SSS_entities = [];
 
 	if (!alive _vehicle || isNull _entity || {(_entity getVariable "SSS_service") != "Transport"}) exitWith {};
 
-	private _action = ["SSS_transport","Transport",ICON_TRANSPORT,{},
+	private _action = ["SSS_transport","运输",ICON_TRANSPORT,{},
 		EFUNC(interaction,transportVehicleActionCondition),
 		EFUNC(interaction,transportVehicleActionChildren)
 	] call ace_interact_menu_fnc_createAction;

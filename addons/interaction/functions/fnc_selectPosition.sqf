@@ -25,7 +25,7 @@ if (missionNamespace getVariable format ["SSS_setting_milsimMode%1",_entity getV
 	SSS_mapClicked = false;
 
 	openMap [true,false];
-	titleText ["Select Position","PLAIN",0.5];
+	titleText ["选择位置","PLAIN",0.5];
 
 	["SSS_selectPosition","onMapSingleClick",{
 		params ["_units","_position","_alt","_shift","_player","_entity","_request"];

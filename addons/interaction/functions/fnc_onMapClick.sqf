@@ -9,7 +9,7 @@ if (count _position isEqualTo 2) then {
 };
 
 private _approvalReturn = [_position] call (_entity getVariable ["SSS_requestCondition",{true}]);
-private _denialText = "Request denied. ";
+private _denialText = "拒绝请求。";
 private _approval = if (_approvalReturn isEqualType true) then {
 	_approvalReturn
 } else {
@@ -29,7 +29,7 @@ switch (_entity getVariable "SSS_supportType") do {
 		if (!alive _vehicle) exitWith {};
 
 		if (!(_vehicle isKindOf "B_Ship_MRLS_01_base_F") && {!(_position inRangeOfArtillery [[_vehicle],_request])}) exitWith {
-			private _string = ["<t color='#f4ca00'>Position out of range.</t> Unable to fulfill request.","Position out of range. Unable to fulfill request."] select SSS_setting_useChatNotifications;
+			private _string = ["<t color='#f4ca00'>超出支援范围。</t>无法执行任务。","超出支援范围。无法执行任务。"] select SSS_setting_useChatNotifications;
 			NOTIFY_LOCAL(_entity,_string);
 		};
 
@@ -94,10 +94,10 @@ switch (_entity getVariable "SSS_supportType") do {
 			};
 		};
 
-		["Drone Request Parameters",[
-			["COMBOBOX","Loiter direction",[[["Clockwise","",ICON_CLOCKWISE],["Counter-Clockwise","",ICON_COUNTER_CLOCKWISE]],0]],
-			["SLIDER","Loiter radius",[[800,2500,0],1000]],
-			["SLIDER","Altitude above position",[[600,2500,0],1000]]
+		["无人机支援参数",[
+			["COMBOBOX","环绕方向",[[["顺时针","",ICON_CLOCKWISE],["逆时针","",ICON_COUNTER_CLOCKWISE]],0]],
+			["SLIDER","环绕半径",[[800,2500,0],1000]],
+			["SLIDER","飞行高度",[[600,2500,0],1000]]
 		],{
 			params ["_values","_args"];
 			_values params ["_loiterDirection","_loiterRadius","_loiterAltitude"];
@@ -157,19 +157,19 @@ switch (_entity getVariable "SSS_supportType") do {
 			private _testPos = AGLtoASL (_position getPos [600,_x # 0]);
 			_testPos set [2,_positionASL # 2 + 350];
 			if (terrainIntersectASL [_positionASL,_testPos]) then {
-				[_x # 1,"Terrain obstructing approach","",RGBA_ORANGE]
+				[_x # 1,"地形阻挡进场","",RGBA_ORANGE]
 			} else {
 				[_x # 1]
 			};
 		};
 
-		["CAS Parameters - " + mapGridPosition _position,[
-			["COMBOBOX",["Approach from","Orange means the approach is blocked"],[_bearingList,0],false],
-			["COMBOBOX","Map position or other signal",[[
-				["Map Position","",ICON_MAP],
-				["Laser Target","",ICON_TARGET],
-				["Smoke Signal","",ICON_SMOKE],
-				["IR Signal","",ICON_STROBE]
+		["近距离空中支援(CAS)参数 - " + mapGridPosition _position,[
+			["COMBOBOX",["进场方向","橙色表示无法从该方向进场"],[_bearingList,0],false],
+			["COMBOBOX","地图位置或其他信号",[[
+				["地图位置","",ICON_MAP],
+				["镭射指引","",ICON_TARGET],
+				["烟雾弹指引","",ICON_SMOKE],
+				["红外指引","",ICON_STROBE]
 			],0],false,{
 				params ["_currentValue","_args","_ctrl"];
 				if (_currentValue isEqualTo 2) then {
@@ -178,14 +178,14 @@ switch (_entity getVariable "SSS_supportType") do {
 					[2,{false}] call EFUNC(CDS,setEnableCondition);
 				};
 			}],
-			["COMBOBOX","Smoke Color",[[
-				"White","Black",
-				["Red","","",[0.9,0,0,1]],
-				["Orange","","",[0.85,0.4,0,1]],
-				["Yellow","","",[0.85,0.85,0,1]],
-				["Green","","",[0,0.8,0,1]],
-				["Blue","","",[0,0,1,1]],
-				["Purple","","",[0.75,0.15,0.75,1]]
+			["COMBOBOX","烟雾颜色",[[
+				"白色","黑色",
+				["红色","","",[0.9,0,0,1]],
+				["橙色","","",[0.85,0.4,0,1]],
+				["黄色","","",[0.85,0.85,0,1]],
+				["绿色","","",[0,0.8,0,1]],
+				["蓝色","","",[0,0,1,1]],
+				["紫色","","",[0.75,0.15,0.75,1]]
 			],0],false,{},{false}]
 		],{
 			params ["_values","_args"];
@@ -202,9 +202,9 @@ switch (_entity getVariable "SSS_supportType") do {
 		switch (_request) do {
 			case "HOVER";
 			case 5 : {
-				["Hover parameters",[
-					["SLIDER",["Hover height","Terrain collision is possible if set too low for angle/enviroment"],[[1,2000,0],15],false],
-					["CHECKBOX","Fastrope at position",true,false]
+				["悬停参数",[
+					["SLIDER",["悬停高度","高度设置过低可能导致飞机与地面相撞"],[[1,2000,0],15],false],
+					["CHECKBOX","就绪后索降",true,false]
 				],{
 					params ["_values","_args"];
 					_args params ["_entity","_request","_position"];
@@ -219,9 +219,9 @@ switch (_entity getVariable "SSS_supportType") do {
 
 			case "LOITER";
 			case 6 : {
-				["Loiter parameters",[
-					["SLIDER","Loiter radius",[[150,1500,0],200]],
-					["COMBOBOX","Loiter direction",[[["Clockwise","",ICON_CLOCKWISE],["Counter-Clockwise","",ICON_COUNTER_CLOCKWISE]],0]]
+				["环绕参数",[
+					["SLIDER","环绕半径",[[150,1500,0],200]],
+					["COMBOBOX","环绕方向",[[["顺时针","",ICON_CLOCKWISE],["逆时针","",ICON_COUNTER_CLOCKWISE]],0]]
 				],{
 					params ["_values","_args"];
 					_args params ["_entity","_request","_position"];
@@ -235,9 +235,9 @@ switch (_entity getVariable "SSS_supportType") do {
 			};
 
 			case "PARADROP" : {
-				["Paradrop parameters",[
-					["SLIDER",["Jump delay","Seconds between each unit jumping out"],[[0,5,1],1]],
-					["SLIDER","AI opening height",[[100,2000,0],200]]
+				["空投参数",[
+					["SLIDER",["跳伞间隔","两个单位之间跳伞时间间隔"],[[0,5,1],1]],
+					["SLIDER","AI开伞高度",[[100,2000,0],200]]
 				],{
 					params ["_values","_args"];
 					_args params ["_entity","_request","_position"];
@@ -326,9 +326,9 @@ switch (_entity getVariable "SSS_supportType") do {
 		switch (_request) do {
 			case "PARADROP";
 			case 5 : {
-				["Paradrop parameters",[
-					["SLIDER",["Jump delay","Seconds between each unit jumping out"],[[0,5,1],1]],
-					["SLIDER","AI opening height",[[100,2000,0],200]]
+				["空投参数",[
+					["SLIDER",["跳伞间隔","两个单位之间跳伞时间间隔"],[[0,5,1],1]],
+					["SLIDER","AI开伞高度",[[100,2000,0],200]]
 				],{
 					params ["_values","_args"];
 					_args params ["_entity","_request","_position"];
@@ -343,9 +343,9 @@ switch (_entity getVariable "SSS_supportType") do {
 
 			case "LOITER";
 			case 6 : {
-				["Loiter parameters",[
-					["SLIDER","Loiter radius",[[500,1500,0],500]],
-					["COMBOBOX","Loiter direction",[[["Clockwise","",ICON_CLOCKWISE],["Counter-Clockwise","",ICON_COUNTER_CLOCKWISE]],0]]
+				["环绕参数",[
+					["SLIDER","环绕半径",[[500,1500,0],500]],
+					["COMBOBOX","环绕方向",[[["顺时针","",ICON_CLOCKWISE],["逆时针","",ICON_COUNTER_CLOCKWISE]],0]]
 				],{
 					params ["_values","_args"];
 					_args params ["_entity","_request","_position"];

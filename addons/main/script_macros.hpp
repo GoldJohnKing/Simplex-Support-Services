@@ -214,7 +214,7 @@
 	isNull _entity || {_entity getVariable "SSS_interrupt" || {!alive _vehicle || !alive driver _vehicle || {(getPos _vehicle) select 2 < 1 && (vectorMagnitude velocityModelSpace _vehicle) < 10}}}
 
 #define REQUEST_CANCELLED \
-	titleText ["Request Cancelled","PLAIN",0.5]; \
+	titleText ["请求已取消","PLAIN",0.5]; \
 	[{titleFadeOut 0.5},[],1] call CBA_fnc_waitAndExecute
 
 #define PLANE_TAKEOFF(VEH) \

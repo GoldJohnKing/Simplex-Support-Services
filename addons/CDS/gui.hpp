@@ -343,7 +343,7 @@ class GVAR(Dialog) {
 			colorFocused[] = {0.2,0.2,0.2,1};
 			colorShadow[] = {0,0,0,0};
 			colorText[] = {1,1,1,1};
-			text = "CANCEL";
+			text = "取消";
 			font = "PuristaMedium";
 			sizeEx = GUI_GRID_H * 1;
 			style = 2;
@@ -373,7 +373,7 @@ class GVAR(Dialog) {
 			colorFocused[] = {0.2,0.2,0.2,1};
 			colorShadow[] = {0,0,0,0};
 			colorText[] = {1,1,1,1};
-			text = "CONFIRM";
+			text = "确认";
 			font = "PuristaMedium";
 			sizeEx = GUI_GRID_H * 1;
 			style = 2;
